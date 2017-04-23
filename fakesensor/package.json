@@ -1,0 +1,17 @@
+{
+  "name": "fakesensor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "request.js",
+  "dependencies": {
+    "nodemon": "^1.11.0",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon ./src/request.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

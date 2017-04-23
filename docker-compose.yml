@@ -1,0 +1,29 @@
+version: "2.1"
+
+services:
+  
+  fakesensor:
+    build: ./fakesensor
+    volumes:
+      - ./fakesensor/src:/usr/src/app/src
+    depends_on:
+      signalk: 
+        condition: service_healthy
+
+    links:
+      - signalk
+
+  signalk:
+    build: ./signalk
+    volumes: 
+      - ./signalk/etc:/etc/signalk
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
