@@ -10,7 +10,7 @@ var options = {
                 "values": [
                     {
                         "path": "environment.inside.temperature",
-                        "value": 295.15
+                        "value": 206.15
                     }
                 ],
                 "source": {
