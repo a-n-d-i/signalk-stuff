@@ -1,40 +1,36 @@
-#include <NTPClient.h>
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <DHT.h>
+#include "RestClient.h"
 #include "credentials.h"
     
-#include <WiFiUdp.h>
 #define DHTTYPE DHT21
 #define DHTPIN  4
 
 const char* ssid = SSID;
 const char* password = PASSWORD;
 const char* host = HOST;
-const int port = 2003;
-bool gotTime = false;
-WiFiUDP ntpUDP;
 
-NTPClient timeClient(ntpUDP);
+String body = "{\"context\": \"vessels.self\",\"updates\": [{\"values\": [{\"path\": \"environment.inside.temperature\",\"value\": TEMP1 } ], \"source\": { \"label\": \"esp8266fakesensor\" } } ] }";
+
+RestClient rclient = RestClient(host, 3000);
 
 ADC_MODE(ADC_VCC);
 int vcc = 0;
+
+
+String response;
 
 ESP8266WebServer server(80);
 
 // Start NTP only after IP network is connected
 void onSTAGotIP(WiFiEventStationModeGotIP ipInfo) {
   Serial.printf("Got IP: %s\r\n", ipInfo.ip.toString().c_str());
-    timeClient.begin();
-
 }
 
 // Manage network disconnection
 void onSTADisconnected(WiFiEventStationModeDisconnected event_info) {
   Serial.printf("Disconnected from SSID: %s\n", event_info.ssid.c_str());
   Serial.printf("Reason: %d\n", event_info.reason);
-  //NTP.stop(); // NTP sync can be disabled to avoid sync errors
 }
 
 // Initialize DHT sensor
@@ -49,10 +45,11 @@ DHT dht(DHTPIN, DHTTYPE, 21); // 11 works fine for ESP8266
 
 float humidity, temp, dewpoint;  // Values read from sensor
 
-String webString="";     // String to display
 // Generally, you should use "unsigned long" for variables that hold time
 unsigned long previousMillis = 0;        // will store last temp was read
 const long interval = 5000;              // interval at which to read sensor
+
+String webString;
 
 void handle_root() {
   server.send(200, "text/plain", "Hello from the weather esp8266, read from /temp or /humidity");
@@ -106,21 +103,8 @@ void setup(void)
 
 void loop(void)
 {
-  timeClient.update();
   gettemperature();
   server.handleClient();
-
-  static int i = 0;
-  static int last = 0;
-
-
-  i++;
-
-  /*if (gotTime == true) {
-    ESP.deepSleep(10 * 1000 * 1000);
-  } else {
-    delay(1000);
-  }*/
 }
 
 
@@ -149,45 +133,24 @@ void gettemperature() {
      float gamma = log(humidity / 100) + ((17.62 * temp) / (243.5 + temp));
      dewpoint = 243.5 * gamma / (17.62 - gamma);
 
-
-    WiFiClient client;
-    Serial.println("connected]");
-    unsigned long epcohTime =  timeClient.getEpochTime();
-    Serial.print("time: ");
-    Serial.println(epcohTime);
-
-    vcc = ESP.getVcc();
+     vcc = ESP.getVcc();
     vcc = vcc * 1.1113;
     Serial.print("vcc: ");
     Serial.println(vcc);
 
-    String req = "sensor1.weather.temperature " + String(temp, 1) + " " + String (epcohTime);
-    Serial.println("[Sending a request] "+req);
-  /*  Serial.printf("\n[Connecting to %s ... ", host);
-    if (client.connect(host, port))
-    {
-      String req = "sensor1.weather.temperature " + String(temp, 1) + " " + String (epcohTime);
-      String req2 = "sensor1.weather.humidity " + String((int)humidity) + " " + String (epcohTime);
-      String req3 = "sensor1.weather.dewpoint " + String(dewpoint, 1) + " " + String (epcohTime);
-      String req4 = "sensor1.self.vcc " + String(vcc) + " " + String (epcohTime);
+    response = "";
+    String bodytmp = body.substring(0, body.length());
+    bodytmp.replace("TEMP1", String(temp+273, 1));
+    Serial.println("[Sending a request] "+bodytmp);
+    int str_len = bodytmp.length() + 1; 
+    char char_array[str_len+1];
+    bodytmp.toCharArray(char_array, str_len);
 
-
-      Serial.println("[Sending a request] "+req);
-      client.println(req);
-
-      Serial.println("[Sending a request] "+req2);
-      client.println(req2);
-
-      Serial.println("[Sending a request] "+req3);
-      client.println(req3);
-
-      Serial.println("[Sending a request] "+req4);
-      client.println(req4);
-
-      client.stop();
-      Serial.println("\n[Disconnected]");
-
-  }*/
-
+    rclient.setContentType("application/json");
+    int statusCode = rclient.post("/signalk/v1/api/_test/delta", char_array, &response);
+    Serial.print("Status code from server: ");
+    Serial.println(statusCode);
+    Serial.print("Response body from server: ");
+    Serial.println(response);
   }
 }
