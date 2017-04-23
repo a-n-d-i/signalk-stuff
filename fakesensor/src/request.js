@@ -1,7 +1,7 @@
 var rp = require('request-promise');
 
 var options = {
-    uri: 'http://signalk:3000/signalk/v1/api/delta',
+    uri: 'http://signalk:3000/signalk/v1/api/_test/delta',
     method: 'POST',
     body: {
         "context": "vessels.self",
@@ -10,7 +10,7 @@ var options = {
                 "values": [
                     {
                         "path": "environment.inside.temperature",
-                        "value": 25.00
+                        "value": 295.15
                     }
                 ],
                 "source": {
@@ -28,7 +28,8 @@ var options = {
 
 rp(options)
     .then(function (response) {
-        console.log(response.body);
+        console.log(response);
+        console.log("SUCCESS");
     })
     .catch(function (err) {
         console.log(err.message)
