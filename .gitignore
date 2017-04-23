@@ -1,3 +1,4 @@
 .idea
 signalk/etc/settings/ssl-cert.pem 
 signalk/etc/settings/ssl-key.pem
+arduino_sketches/DhtEsp8266Server/credentials.h
