@@ -1,1 +1,3 @@
 .idea
+signalk/etc/settings/ssl-cert.pem 
+signalk/etc/settings/ssl-key.pem
