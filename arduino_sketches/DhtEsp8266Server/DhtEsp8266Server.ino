@@ -10,7 +10,7 @@ const char* ssid = SSID;
 const char* password = PASSWORD;
 const char* host = HOST;
 
-String body = "{\"context\": \"vessels.self\",\"updates\": [{\"values\": [{\"path\": \"environment.inside.temperature\",\"value\": TEMP1 } ], \"source\": { \"label\": \"esp8266fakesensor\" } } ] }";
+String body = "{\"context\": \"vessels.self\",\"updates\": [{\"values\": [{\"path\": \"environment.inside.temperature\",\"value\": TEMP1 }, {\"path\": \"environment.inside.humidity\",\"value\": HUMID1 } ], \"source\": { \"label\": \"esp8266fakesensor\" } } ] }";
 
 RestClient rclient = RestClient(host, 3000);
 
@@ -141,6 +141,7 @@ void gettemperature() {
     response = "";
     String bodytmp = body.substring(0, body.length());
     bodytmp.replace("TEMP1", String(temp+273, 1));
+    bodytmp.replace("HUMID1", String(humidity));
     Serial.println("[Sending a request] "+bodytmp);
     int str_len = bodytmp.length() + 1; 
     char char_array[str_len+1];
