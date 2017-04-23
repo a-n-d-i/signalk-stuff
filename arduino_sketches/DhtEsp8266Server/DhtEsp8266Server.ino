@@ -106,20 +106,14 @@ void setup(void)
 
 void loop(void)
 {
-
+  timeClient.update();
   gettemperature();
   server.handleClient();
 
   static int i = 0;
   static int last = 0;
 
-  Serial.print(i);
-  Serial.print(" ");
-  Serial.print(timeClient.getFormattedTime());
-  Serial.print(" ");
-  Serial.print("WiFi is ");
-  Serial.print(WiFi.isConnected() ? "connected" : "not connected");
-  Serial.println(". ");
+
   i++;
 
   /*if (gotTime == true) {
@@ -167,8 +161,8 @@ void gettemperature() {
     Serial.print("vcc: ");
     Serial.println(vcc);
 
-     String req = "sensor1.weather.temperature " + String(temp, 1) + " " + String (epcohTime);
-  Serial.println("[Sending a request] "+req);
+    String req = "sensor1.weather.temperature " + String(temp, 1) + " " + String (epcohTime);
+    Serial.println("[Sending a request] "+req);
   /*  Serial.printf("\n[Connecting to %s ... ", host);
     if (client.connect(host, port))
     {
