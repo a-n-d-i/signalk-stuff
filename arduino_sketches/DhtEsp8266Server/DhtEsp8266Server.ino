@@ -5,6 +5,7 @@
     
 #define DHTTYPE DHT21
 #define DHTPIN  4
+#define DHTPOWERPIN 5
 
 const char* ssid = SSID;
 const char* password = PASSWORD;
@@ -47,7 +48,7 @@ float humidity, temp, dewpoint;  // Values read from sensor
 
 // Generally, you should use "unsigned long" for variables that hold time
 unsigned long previousMillis = 0;        // will store last temp was read
-const long interval = 5000;              // interval at which to read sensor
+const long interval = 1000;              // interval at which to read sensor
 
 String webString;
 
@@ -59,6 +60,8 @@ void handle_root() {
 void setup(void)
 {
   static WiFiEventHandler e1, e2;
+  pinMode(DHTPOWERPIN, OUTPUT);
+  digitalWrite(DHTPOWERPIN, HIGH);
 
   e1 = WiFi.onStationModeGotIP(onSTAGotIP);// As soon WiFi is connected, start NTP Client
   e2 = WiFi.onStationModeDisconnected(onSTADisconnected);
@@ -133,7 +136,7 @@ void gettemperature() {
      float gamma = log(humidity / 100) + ((17.62 * temp) / (243.5 + temp));
      dewpoint = 243.5 * gamma / (17.62 - gamma);
 
-     vcc = ESP.getVcc();
+    vcc = ESP.getVcc();
     vcc = vcc * 1.1113;
     Serial.print("vcc: ");
     Serial.println(vcc);
@@ -153,5 +156,11 @@ void gettemperature() {
     Serial.println(statusCode);
     Serial.print("Response body from server: ");
     Serial.println(response);
+    delay(100);
+
+    // shut down sensor
+    digitalWrite(DHTPOWERPIN, LOW);
+    // go to sleep
+    ESP.deepSleep(10 * 1000000);
   }
 }
