@@ -11,12 +11,12 @@ const char* ssid = SSID;
 const char* password = PASSWORD;
 const char* host = HOST;
 
-String body = "{\"context\": \"vessels.self\",\"updates\": [{\"values\": [{\"path\": \"environment.inside.temperature\",\"value\": TEMP1 }, {\"path\": \"environment.inside.humidity\",\"value\": HUMID1 } ], \"source\": { \"label\": \"esp8266fakesensor\" } } ] }";
+String body = "{\"context\": \"vessels.self\",\"updates\": [{\"values\": [{\"path\": \"environment.inside.temperature\",\"value\": TEMP1 }, {\"path\": \"environment.inside.humidity\",\"value\": HUMID1 },  {\"path\": \"sensors.sensor1vcc\",\"value\": VCC1 } ], \"source\": { \"label\": \"esp8266fakesensor\" } } ] }";
 
-RestClient rclient = RestClient(host, 3000);
+RestClient rclient = RestClient(host, PORT);
 
-ADC_MODE(ADC_VCC);
-int vcc = 0;
+//ADC_MODE(ADC_VCC);
+long vcc = 0;
 
 
 String response;
@@ -136,15 +136,17 @@ void gettemperature() {
      float gamma = log(humidity / 100) + ((17.62 * temp) / (243.5 + temp));
      dewpoint = 243.5 * gamma / (17.62 - gamma);
 
-    vcc = ESP.getVcc();
-    vcc = vcc * 1.1113;
+    vcc = analogRead(A0);
+    float voltage = vcc * 4.4 / 1023.0*1.1158;
+    //vcc = vcc * 4.2/1024;
     Serial.print("vcc: ");
-    Serial.println(vcc);
+    Serial.println(voltage);
 
     response = "";
     String bodytmp = body.substring(0, body.length());
     bodytmp.replace("TEMP1", String(temp+273, 1));
     bodytmp.replace("HUMID1", String(humidity));
+    bodytmp.replace("VCC1", String(voltage));
     Serial.println("[Sending a request] "+bodytmp);
     int str_len = bodytmp.length() + 1; 
     char char_array[str_len+1];
@@ -164,6 +166,6 @@ void gettemperature() {
     // shut down sensor
     digitalWrite(DHTPOWERPIN, LOW);
     // go to sleep
-    ESP.deepSleep(30 * 1000000);
+    ESP.deepSleep(10*60 * 1000000);
   }
 }

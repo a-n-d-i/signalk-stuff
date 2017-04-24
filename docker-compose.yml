@@ -24,7 +24,6 @@ services:
       - influx
     command: ["./wait-for-it.sh" , "influx:8086", "--",  "./startup.sh"]
 
-
   influx:
     build: ./influx
     ports:
@@ -33,3 +32,8 @@ services:
     expose:
       - 8083
       - 8086
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
