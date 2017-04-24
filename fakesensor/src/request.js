@@ -25,12 +25,17 @@ var options = {
 };
 
 //console.log("BLA")
+var sendData = function () {
+    options.body.updates[0].values[0].value = Math.floor((Math.random() * 20) + 273);
+    rp(options)
+        .then(function (response) {
+            console.log(response);
+            console.log("SUCCESS");
+        })
+        .catch(function (err) {
+            console.log(err.message)
+        });
+}
 
-rp(options)
-    .then(function (response) {
-        console.log(response);
-        console.log("SUCCESS");
-    })
-    .catch(function (err) {
-        console.log(err.message)
-    });
+
+setInterval(sendData, 2000)

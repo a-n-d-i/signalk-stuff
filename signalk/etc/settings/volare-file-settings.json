@@ -21,7 +21,7 @@
     "ws": true,
     "tcp": false,
     "nmea-tcp": false,
-    "plugins": false
+    "plugins": true
   },
 
   "pipedProviders": [{
