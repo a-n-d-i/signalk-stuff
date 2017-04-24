@@ -1,0 +1,3 @@
+[submodule "signalk/externals/signalk-to-influxdb.git"]
+	path = signalk/externals/signalk-to-influxdb.git
+	url = git@github.com:a-n-d-i/signalk-to-influxdb.git
