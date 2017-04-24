@@ -19,16 +19,27 @@ WORKDIR "/var/signalk-server-node-master"
 RUN npm install tkurki/signalk-to-influxdb --save
 RUN npm install ; npm cache clean
 
+COPY wait-for-it.sh .
+COPY startup.sh .
+COPY signalk-to-influxdb.json ./plugin-config-data/signalk-to-influxdb.json
+
 USER root
+RUN chmod a+x ./wait-for-it.sh
+RUN chmod a+x ./startup.sh
+RUN chown signalk.signalk ./plugin-config-data/signalk-to-influxdb.json
+
 
 RUN mv /var/signalk-server-node-master/settings /usr/local/share/signalk; \
   ln -s /etc/signalk/settings /var/signalk-server-node-master/settings
 
-COPY signalk.conf.example /usr/local/share/signalk
-
 USER signalk
+
+#ENV DEBUG=signalk-server
+ENV DEBUG=signalk-to-influxdb
 
 VOLUME ["/etc/signalk"]
 
 EXPOSE 3000
-ENTRYPOINT ["bin/signalk-server", "-s",  "settings/volare-file-settings.json"]
+#CMD curl -X POST http://influx:8086/query?q=CREATE+DATABASE+boatdata
+#ENTRYPOINT ["bin/signalk-server", "-s",  "settings/volare-file-settings.json"]
+

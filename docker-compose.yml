@@ -9,7 +9,6 @@ services:
     depends_on:
       - signalk
     command: ["./wait-for-it.sh" , "signalk:3000", "--", "npm", "start"]
-
     links:
       - signalk
 
@@ -23,6 +22,8 @@ services:
       - "3000:3000"
     depends_on:
       - influx
+    command: ["./wait-for-it.sh" , "influx:8086", "--",  "./startup.sh"]
+
 
   influx:
     build: ./influx
