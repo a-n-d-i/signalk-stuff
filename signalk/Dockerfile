@@ -16,8 +16,11 @@ RUN wget -P /tmp https://github.com/SignalK/signalk-server-node/archive/master.t
 
 WORKDIR "/var/signalk-server-node-master"
 
-RUN npm install tkurki/signalk-to-influxdb --save
 RUN npm install ; npm cache clean
+
+COPY /externals/signalk-to-influxdb.git signalk-to-influxdb
+
+RUN npm install file:./signalk-to-influxdb --save
 
 COPY wait-for-it.sh .
 COPY startup.sh .

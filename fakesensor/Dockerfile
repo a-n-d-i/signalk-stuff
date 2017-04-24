@@ -11,6 +11,8 @@ WORKDIR /usr/src/app
 COPY wait-for-it.sh /usr/src/app/
 RUN chmod a+x ./wait-for-it.sh
 
+RUN ls
+
 # Install app dependencies
 COPY package.json /usr/src/app/
 RUN npm install
