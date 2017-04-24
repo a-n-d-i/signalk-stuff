@@ -156,11 +156,14 @@ void gettemperature() {
     Serial.println(statusCode);
     Serial.print("Response body from server: ");
     Serial.println(response);
+
+    WiFi.disconnect();
+    Serial.end();
     delay(100);
 
     // shut down sensor
     digitalWrite(DHTPOWERPIN, LOW);
     // go to sleep
-    ESP.deepSleep(10 * 1000000);
+    ESP.deepSleep(30 * 1000000);
   }
 }
