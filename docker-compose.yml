@@ -34,6 +34,12 @@ services:
       - 8086
 
   grafana:
-    image: grafana/grafana
+    build: ./grafana
     ports:
       - "3001:3000"
+
+  grafana_setup:
+    build: ./grafana_datasource_setup
+    depends_on:
+      - grafana
+    command: ["./wait-for-it.sh", "grafana:3000", "--", "curl","http://admin:admin@grafana:3000/api/datasources", "-vsSg","-H", "Content-Type:application/json",  "-X", "POST",  "--data-binary", "{\"name\":\"influx\",\"type\":\"influxdb\",\"url\":\"http://influx:8086\",\"access\":\"proxy\",\"isDefault\":true,\"database\":\"boatdata\",\"user\":\"\",\"password\":\"\"}", ]
