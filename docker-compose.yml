@@ -40,4 +40,8 @@ services:
     build: ./grafana_datasource_setup
     depends_on:
       - grafana
-    command: ["./wait-for-it.sh", "grafana:3000", "--", "curl","http://admin:admin@grafana:3000/api/datasources", "-vsSg","-H", "Content-Type:application/json",  "-X", "POST",  "--data-binary", "{\"name\":\"influx\",\"type\":\"influxdb\",\"url\":\"http://influx:8086\",\"access\":\"proxy\",\"isDefault\":true,\"database\":\"boatdata\",\"user\":\"\",\"password\":\"\"}", ]
+    command: ["./wait-for-it.sh", "grafana:3000", "--", "curl","http://admin:admin@grafana:3000/api/datasources", "-sSg","-H", "Content-Type:application/json",  "-X", "POST",  "--data-binary", "{\"name\":\"influx\",\"type\":\"influxdb\",\"url\":\"http://influx:8086\",\"access\":\"proxy\",\"isDefault\":true,\"database\":\"boatdata\",\"user\":\"\",\"password\":\"\"}", ]
+
+  raspi:
+    image: jsurf/rpi-raspbian
+    command: ls

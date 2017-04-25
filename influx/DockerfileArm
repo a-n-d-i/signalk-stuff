@@ -1,0 +1,3 @@
+FROM hypriot/rpi-influxdb:latest
+
+RUN apt-get update
