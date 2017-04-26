@@ -5,8 +5,7 @@ services:
 
   influx:
     build:
-      context: ./influx
-      dockerfile: DockerfileArm
+      context: ./influx/armhf
     ports:
       - "8086:8086"
     expose:
