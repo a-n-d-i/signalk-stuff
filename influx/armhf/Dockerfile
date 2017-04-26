@@ -15,18 +15,17 @@ RUN apk add --no-cache --virtual .build-deps wget gnupg tar ca-certificates && \
     mkdir -p /usr/src && \
     tar -C /usr/src -xzf influxdb-${INFLUXDB_VERSION}_linux_armhf.tar.gz && \
     rm -f /usr/src/influxdb-*/influxdb.conf && \
-    chmod +x /usr/src/influxdb-*/* && \
-    cp -a /usr/src/influxdb-*/* /usr/bin/ && \
+    cp -a /usr/src/influxdb-*/usr/bin/* /usr/bin/ && \
     rm -rf *.tar.gz* /usr/src /root/.gnupg && \
     apk del .build-deps
 COPY influxdb.conf /etc/influxdb/influxdb.conf
 
 EXPOSE 8086
 
+
 VOLUME /var/lib/influxdb
 
 COPY entrypoint.sh /entrypoint.sh
 
-#ENTRYPOINT ["/entrypoint.sh"]
-#CMD ["influxd"]
-ENTRYPOINT bash
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["influxd"]
