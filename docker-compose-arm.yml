@@ -1,7 +1,18 @@
 version: "2"
 
 services:
-  
+
+  fakesensor:
+    build:
+      context: ./fakesensor
+      dockerfile: Dockerfile_arm
+    volumes:
+      - ./fakesensor/src:/usr/src/app/src
+    depends_on:
+      - signalk
+    command: ["./wait-for-it.sh" , "signalk:3000", "--", "npm", "start"]
+    links:
+      - signalk
 
   influx:
     build:
@@ -10,3 +21,18 @@ services:
       - "8086:8086"
     expose:
       - 8086
+
+
+  signalk:
+    build:
+      context: ./signalk
+      dockerfile: Dockerfile_arm
+    volumes:
+      - ./signalk/etc:/etc/signalk
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influx
+    command: ["./wait-for-it.sh" , "influx:8086", "--",  "./startup.sh"]
